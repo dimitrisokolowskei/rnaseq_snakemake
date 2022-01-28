@@ -7,6 +7,7 @@ rule all:
     "kallisto/Homo_sapiens.GRCh38.cdna.all.index",
     expand("kallisto/{condition}", condition=config["conditions"])
 
+
 rule fastqc:
   input:
     rawread=expand("raw_data/{sample}_{replicate}.fastq.gz", sample=config["samples"], replicate=[1, 2])
@@ -22,10 +23,12 @@ rule fastqc:
     path="raw_qc/"
   
   conda:
-    "~/Documentos/conda_export/enviroment.yaml"
+    "~/Documentos/rnaseq_snakemake/enviroment.yaml"
   
   shell:
     "fastqc -t {threads} {input.rawread} -o {params.path}" 
+
+
 
 rule trimmomatic:
   input:
@@ -45,13 +48,15 @@ rule trimmomatic:
     adapter="adapter.fa"
   
   conda:
-    "~/Documentos/conda_export/enviroment.yaml"
+    "~/Documentos/rnaseq_snakemake/enviroment.yaml"
   
   shell:
     "trimmomatic PE -threads {threads} -phred33 {input.R1} {input.R2} -baseout {params.baseout} \
     ILLUMINACLIP:{params.adapter}:2:30:10:2:keepBothReads LEADING:3 TRAILING:30 MINLEN:36 2>{params.log}"
 
-rule kallisto_prep:
+
+
+rule kallisto_index:
   input:
     initial="kallisto/Homo_sapiens.GRCh38.cdna.all.fa"
     
@@ -61,20 +66,9 @@ rule kallisto_prep:
   threads:
    8
 
-  shell: "cp {input.initial} {output.final}"     
+  shell: "cp {input.initial} {output.final} | kallisto index -i {output.final} {input.initial}"     
 
-rule kallisto_index:
-  input:
-    index="kallisto/Homo_sapiens.GRCh38.cdna.all.index",
-    reference="kallisto/Homo_sapiens.GRCh38.cdna.all.fa"
-  
-  output:
-    "kallisto/Homo_sapiens.GRCh38.cdna.all.index"
-  
-  threads:
-    8
-  
-  shell: "kallisto index -i {input.index} {input.reference} > Homo_sapiens.GRCh38.cdna.all.log" 
+
 
 rule kallisto_quant:
   input:
