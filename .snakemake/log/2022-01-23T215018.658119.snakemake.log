@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job counts:
+	count	jobs
+	1	kallisto_prep
+	1
+
+[Sun Jan 23 21:50:18 2022]
+rule kallisto_prep:
+    input: kallisto/Homo_sapiens.GRCh38.cdna.all.fa
+    output: kallisto/Homo_sapiens.GRCh38.cdna.all.index
+    jobid: 0
+    threads: 8
+
+RuleException in line 58 of /home/dimitri/Documentos/rnaseq_snakemake/snakefile:
+'InputFiles' object has no attribute 'inital'

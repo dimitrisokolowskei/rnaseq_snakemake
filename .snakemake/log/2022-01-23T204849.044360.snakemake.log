@@ -1,0 +1,67 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job counts:
+	count	jobs
+	1	all
+	1	fastqc
+	1	kallisto_prep
+	1	kallisto_quant
+	1	trimmomatic
+	5
+
+[Sun Jan 23 20:48:49 2022]
+rule fastqc:
+    input: raw_data/SRR6974023_1.fastq.gz, raw_data/SRR6974023_2.fastq.gz
+    output: raw_qc/SRR6974023_1_fastqc.zip, raw_qc/SRR6974023_2_fastqc.zip, raw_qc/SRR6974023_1_fastqc.html, raw_qc/SRR6974023_2_fastqc.html
+    jobid: 1
+    threads: 8
+
+[Sun Jan 23 20:52:41 2022]
+Finished job 1.
+1 of 5 steps (20%) done
+
+[Sun Jan 23 20:52:41 2022]
+rule trimmomatic:
+    input: raw_data/SRR6974023_1.fastq.gz, raw_data/SRR6974023_2.fastq.gz
+    output: Trimmed/SRR6974023_1P.fastq.gz, Trimmed/SRR6974023_2P.fastq.gz, Trimmed/SRR6974023_1U.fastq.gz, Trimmed/SRR6974023_2U.fastq.gz
+    jobid: 2
+    threads: 8
+
+[Sun Jan 23 21:07:01 2022]
+Finished job 2.
+2 of 5 steps (40%) done
+
+[Sun Jan 23 21:07:01 2022]
+rule kallisto_prep:
+    input: kallisto/Homo_sapiens.GRCh38.cdna.all.fa
+    output: kallisto/Homo_sapiens.GRCh38.cdna.all.index
+    jobid: 3
+    threads: 8
+
+[Sun Jan 23 21:07:01 2022]
+Finished job 3.
+3 of 5 steps (60%) done
+
+[Sun Jan 23 21:07:01 2022]
+rule kallisto_quant:
+    input: Trimmed/SRR6974023_1P.fastq.gz, Trimmed/SRR6974023_2P.fastq.gz, kallisto/Homo_sapiens.GRCh38.cdna.all.index
+    output: kallisto/HS01
+    jobid: 4
+    threads: 8
+
+[Sun Jan 23 21:07:01 2022]
+Error in rule kallisto_quant:
+    jobid: 4
+    output: kallisto/HS01
+    shell:
+        kallisto quant -i kallisto/Homo_sapiens.GRCh38.cdna.all.index -o kallisto/HS01 -t 8 Trimmed/SRR6974023_1P.fastq.gz Trimmed/SRR6974023_2P.fastq.gz
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job kallisto_quant since they might be corrupted:
+kallisto/HS01
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/dimitri/Documentos/rnaseq_snakemake/.snakemake/log/2022-01-23T204849.044360.snakemake.log

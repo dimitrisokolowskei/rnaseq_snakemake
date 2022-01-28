@@ -1,0 +1,21 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job counts:
+	count	jobs
+	1	kallisto_index
+	1
+
+[Sun Jan 23 21:59:26 2022]
+rule kallisto_index:
+    input: kallisto/Homo_sapiens.GRCh38.cdna.all.fa
+    output: kallisto/Homo_sapiens.GRCh38.cdna.all.index
+    jobid: 0
+    threads: 8
+
+[Sun Jan 23 22:05:34 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /home/dimitri/Documentos/rnaseq_snakemake/.snakemake/log/2022-01-23T215926.956430.snakemake.log

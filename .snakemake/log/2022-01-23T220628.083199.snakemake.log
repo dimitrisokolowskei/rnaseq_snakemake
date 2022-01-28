@@ -1,0 +1,29 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job counts:
+	count	jobs
+	1	kallisto_quant
+	1
+
+[Sun Jan 23 22:06:28 2022]
+rule kallisto_quant:
+    input: Trimmed/SRR6974023_1P.fastq.gz, Trimmed/SRR6974023_2P.fastq.gz, kallisto/Homo_sapiens.GRCh38.cdna.all.index
+    output: kallisto/HS01
+    jobid: 0
+    threads: 8
+
+Terminating processes on user request, this might take some time.
+[Sun Jan 23 22:06:37 2022]
+Error in rule kallisto_quant:
+    jobid: 0
+    output: kallisto/HS01
+    shell:
+        kallisto quant -i kallisto/Homo_sapiens.GRCh38.cdna.all.index -o kallisto/HS01 -t 8 Trimmed/SRR6974023_1P.fastq.gz Trimmed/SRR6974023_2P.fastq.gz
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job kallisto_quant since they might be corrupted:
+kallisto/HS01
+Complete log: /home/dimitri/Documentos/rnaseq_snakemake/.snakemake/log/2022-01-23T220628.083199.snakemake.log

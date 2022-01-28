@@ -1,0 +1,3 @@
+Building DAG of jobs...
+CyclicGraphException in line 66 of /home/dimitri/Documentos/rnaseq_snakemake/snakefile:
+Cyclic dependency on rule kallisto_index.

@@ -22,9 +22,6 @@ rule fastqc:
   params:
     path="raw_qc/"
   
-  conda:
-    "~/Documentos/rnaseq_snakemake/enviroment.yaml"
-  
   shell:
     "fastqc -t {threads} {input.rawread} -o {params.path}" 
 
@@ -47,8 +44,6 @@ rule trimmomatic:
     log=expand("Trimmed/{sample}.log", sample=config["samples"]),
     adapter="adapter.fa"
   
-  conda:
-    "~/Documentos/rnaseq_snakemake/enviroment.yaml"
   
   shell:
     "trimmomatic PE -threads {threads} -phred33 {input.R1} {input.R2} -baseout {params.baseout} \
