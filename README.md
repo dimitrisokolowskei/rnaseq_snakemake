@@ -33,7 +33,7 @@ snakemake --core 8 all
 - Before executing ```snakefile``` ensure that all the data and directories needed are as described earlier.
 - If you try to use your own personal data, be aware that the ```config.yaml``` file needs to be modified. You should only insert the files name/id, instead of something like ```{sample_name}_1.fastq.gz```. 
 - In the ```config.yaml``` file the number of ```samples``` **needs** to be equal to the number of ```conditions```. And every ```samples``` **must** have a ```conditions``` with a diferent name. This happens duo to kallisto pseudoaligner, where *output* files will be sent to a specific directory (```conditions```) for better organization. 
-- If you are interested to only run a specific step of the ```snakefile```, just state the name of the **rule** you are interest in, instead of ```all```. Example:
+- If you are interested to only run a specific step of the ```snakefile```, just state the name of the **rule** you are interest to run, instead of ```all```. Example:
  ```sh
 snakemake --core 8 fastqc
 ```
