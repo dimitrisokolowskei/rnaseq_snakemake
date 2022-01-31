@@ -10,7 +10,7 @@ conda activate rnaseq # enters the recently created environment
 This command will use the ```enviroment.yaml``` file and create a enviroment called ```rnaseq``` containing all the programs you'll need. 
 
 ## Data Download 
-The RNA-Seq data that we're going to use is described in [Sousa et al., 2019](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-5967-8). In this paper, the autors describes DEG of T cells stimulated by different versions of OKT3, an anti-CD3 antibody. This data is pubicly available in SRA with the study code ```SRP139131```. For matters of simplification we'll only use the control and the T cells treated with OKT3 duplicates data. However, feel free to use the entire dataset. First let's create our working sub(directories) using: 
+The RNA-Seq data that we're going to use is described in [Sousa et al., 2019](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-5967-8). In this paper, the autors describes DEG of T cells stimulated by different versions of OKT3, an anti-CD3 antibody. This data is pubicly available in SRA with the study code ```SRP139131```. For matters of simplification we'll only use the control and the T cells treated with OKT3 duplicates data. However, feel free to use the entire dataset or any other piece of data that may be of your interest. First let's create our working sub(directories) using: 
 ```sh
 mkdir -p rnaseq/{Trimmed,metadata,kallisto,raw_data,raw_qc}
 ```
@@ -20,8 +20,19 @@ cat SRR_Acc_List.txt | parallel "fastq-dump --gzip --split-files {}"
 ```
 The reference genome also need to be collected for latter mapping process. Inside ```kallisto``` directory use:
 ```sh
-curl -O http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz | gunzip
+curl -O http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz && gunzip *.gz
 ```
-
-
-
+## Snakemake Run
+To run our analysis we'll need to execute the ```snakefile``` containing all the RNA-Seq steps. In your terminal, use:
+```sh
+snakemake --core 8 all
+```
+```snakemake``` command will execute our ```snakefile``` file. The number of cores after ```--core``` will depend on your machine or server. 
+## Warnings 
+- If you try to use your own personal data, be aware that the ```config.yaml``` file needs to be modified. You should only insert the files name/id, instead of something like ```{sample_name}_1.fastq.gz```. 
+- In the ```config.yaml``` file the number of ```samples``` **needs** to be equal to the number of ```conditions```. And every ```samples``` **must** have a ```conditions``` with a diferent name. This happens duo to kallisto pseudoaligner, where every read of each sample mapped against the reference genome will be sent to a specific directory (```conditions```). 
+- If you are interested to only run a specific step of the snakefile, just state the name of the rule you are interest in, instead of ```all```. Example:
+ ```sh
+snakemake --core 8 fastqc
+```
+- In case of troubleshooting, please verify if the directories contains the right data.  
