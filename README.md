@@ -1,4 +1,5 @@
 # RNA-Seq Analysis Workflow Automation Using Snakemake
+[![Snakemake](https://img.shields.io/badge/snakemake-≥6.1.0-brightgreen.svg)](https://snakemake.github.io)
 ## Introduction
 RNA sequencing (RNA-Seq) employs high-troughtput sequencing technologies to unravel the transcriptomic profile of living organisms. The raw sequencing *dataset* requires a series of elegant and sofisticated pieces of bioinformatics *softwares* to gather usefull and insightful information on biological data. Here I'll describe a basic RNA-Seq *pipeline* using snakemake workflow language for automation.
 ## *Software* Requirements 
