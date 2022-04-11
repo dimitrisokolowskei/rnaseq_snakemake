@@ -13,7 +13,7 @@ This command will use the ```enviroment.yaml``` file and create a enviroment cal
 ## Data Download 
 The RNA-Seq data that we're going to use is described in [Sousa et al., 2019](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-5967-8). In this paper, the autors describes DEG of T cells stimulated by different versions of OKT3, an anti-CD3 antibody. This data is pubicly available in SRA with the study code ```SRP139131```. For matters of simplification we'll only use the control and the T cells treated with OKT3 data. However, feel free to use the entire dataset or any other piece of data that may be of your interest.
 
-Inside ```rnaseq``` directory, use the following command to create our (sub)directories: 
+Use the following command to create our (sub)directories: 
 ```sh
 mkdir -p {Trimmed,metadata,kallisto,raw_data,raw_qc}
 ```
@@ -28,9 +28,9 @@ curl -O http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/cdna/Homo_sapi
 ## Snakemake Run
 To run our analysis we'll need to execute the ```snakefile``` containing all the RNA-Seq steps. In your terminal, use:
 ```sh
-snakemake --core 8 all
+snakemake -s snakefile -j 8
 ```
-```snakemake``` command will execute our ```snakefile``` file. The number of cores after ```--core``` will depend on your machine or server CPU capability. 
+```snakemake``` command will execute our ```snakefile``` file. The number of cores after ```-j``` will depend on your machine or server CPU capability. 
 ## Warnings 
 - Before executing ```snakefile``` ensure that all the data and directories needed are as described earlier.
 - If you try to use your own personal data, be aware that the ```config.yaml``` file needs to be modified. You should only insert the files name/id, instead of something like ```{sample_name}_1.fastq.gz```. 
