@@ -1,0 +1,13 @@
+samples:
+  - SRR6974023
+  - SRR6974024
+  - SRR6974025
+  - SRR6974026
+ 
+  
+conditions:
+  - CS01
+  - CS02
+  - OKT01
+  - OKT02
+  
