@@ -1,14 +1,9 @@
 configfile: "config.yaml"
 
-
-ruleorder: fastqc > fastp > kallisto_gunzip > kallisto_index > kallisto_quant
-
-
 rule all:
     input:
       expand("raw_qc/{sample}_{replicate}_fastqc.{extension}", sample=config["samples"], replicate=[1, 2], extension=["zip", "html"]),
       expand("trimmed/{sample}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
-      "kallisto/Homo_sapiens.GRCh38.cdna.all.fa",
       "kallisto/Homo_sapiens.GRCh38.cdna.all.index",
       expand("kallisto/{condition}", condition=config["conditions"])
 
@@ -21,6 +16,8 @@ rule fastqc:
       compress=expand("raw_qc/{sample}_{replicate}_fastqc.zip", sample=config["samples"], replicate=[1, 2]),
       net=expand("raw_qc/{sample}_{replicate}_fastqc.html", sample=config["samples"], replicate=[1, 2])
     
+    priority: 50
+
     threads: 
       8
     
@@ -40,6 +37,8 @@ rule fastp:
        RP=expand("trimmed/{samples}_1_trim.fastq.gz", samples=config["samples"]),
        RU=expand("trimmed/{samples}_2_trim.fastq.gz", samples=config["samples"])
      
+    priority: 40
+     
     threads: 
       8 
     
@@ -49,16 +48,6 @@ rule fastp:
     shell:
       "fastp -i {input.R1} -I {input.R2} -o {output.RP} -O {output.RU} -l {params.lenght} --adapter_fasta adapter.fa"
 
-
-rule kallisto_gunzip:
-    input:
-      "kallisto/Homo_sapiens.GRCh38.cdna.all.fa.gz"
-    output:
-      "kallisto/Homo_sapiens.GRCh38.cdna.all.fa"
-    threads:
-      8
-    shell:
-      "gunzip {input} ."
 
 rule kallisto_index:
     input:
