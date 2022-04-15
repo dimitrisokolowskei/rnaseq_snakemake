@@ -15,15 +15,15 @@ The RNA-Seq data that we're going to use is described in [Sousa et al., 2019](ht
 
 Use the following command to create our (sub)directories: 
 ```sh
-mkdir -p {Trimmed,metadata,kallisto,raw_data,raw_qc}
+mkdir -p {Trimmed,raw_data,raw_qc}
 ```
 Now, inside ```raw_data``` directory, download our work data from SRA using the following command:
 ```sh
 cat SRR_Acc_List.txt | parallel "fastq-dump --gzip --split-files {}"
 ```
-The reference genome also need to be collected for latter mapping process. Inside ```kallisto``` directory use:
+The reference genome inside ```kallisto``` directory needs to be unzipped:
 ```sh
-curl -O http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz && gunzip *.gz
+gunzip *.gz
 ```
 ## Snakemake Run
 To run our analysis we'll need to execute the ```snakefile``` containing all the RNA-Seq steps. In your terminal, use:
