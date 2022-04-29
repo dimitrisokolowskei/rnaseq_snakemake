@@ -15,7 +15,7 @@ The RNA-Seq data that we're going to use is described in [Sousa et al., 2019](ht
 
 Use the following command to create our (sub)directories: 
 ```sh
-mkdir -p {Trimmed,raw_data,raw_qc}
+mkdir -p {trimmed,raw_data,raw_qc}
 ```
 Now, inside ```raw_data``` directory, download our work data from SRA using the following command:
 ```sh
