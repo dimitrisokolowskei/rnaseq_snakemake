@@ -36,6 +36,7 @@ rule fastp:
     output:
        RP=expand("trimmed/{samples}_1_trim.fastq.gz", samples=config["samples"]),
        RU=expand("trimmed/{samples}_2_trim.fastq.gz", samples=config["samples"])
+       
      
     priority: 40
      
@@ -75,3 +76,4 @@ rule kallisto_quant:
       8
 
     shell: "kallisto quant -i {input.index} -o {output.final} -t {threads} {input.read1} {input.read2}"
+
