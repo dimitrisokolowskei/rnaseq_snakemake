@@ -1,43 +1,49 @@
 configfile: "config.yaml"
 
+
+WORK_DATA = config["WORK_DATA"]
+WORK_QC = config["WORK_QC"]
+WORK_TRIM = config["WORK_TRIM"]
+WORK_KALL = config["WORK_KALL"]
+
+
 rule all:
     input:
-      expand("raw_qc/{sample}_{replicate}_fastqc.{extension}", sample=config["samples"], replicate=[1, 2], extension=["zip", "html"]),
-      expand("trimmed/{sample}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
-      "kallisto/Homo_sapiens.GRCh38.cdna.all.index",
-      expand("kallisto/{condition}", condition=config["conditions"])
+      expand(WORK_QC + "{sample}_{replicate}_fastqc.{extension}", sample=config["samples"], replicate=[1, 2], extension=["zip", "html"]),
+      expand(WORK_TRIM + "{samples}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
+      WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index",
+      expand(WORK_KALL + "{condition}", condition=config["conditions"])
 
-
+      
 rule fastqc:
     input:
-      rawread=expand("raw_data/{sample}_{replicate}.fastq.gz", sample=config["samples"], replicate=[1, 2])
+      WORK_DATA + "{sample}_{replicate}.fastq.gz"
     
     output:
-      compress=expand("raw_qc/{sample}_{replicate}_fastqc.zip", sample=config["samples"], replicate=[1, 2]),
-      net=expand("raw_qc/{sample}_{replicate}_fastqc.html", sample=config["samples"], replicate=[1, 2])
-    
+      WORK_QC + "{sample}_{replicate}_fastqc.{extension}",
+      
     priority: 50
 
     threads: 
       8
     
     params:
-      path="raw_qc/"
+      path = WORK_QC
     
     shell:
-      "fastqc -t {threads} {input.rawread} -o {params.path}" 
+      "fastqc -t {threads} {input} -o {params.path}" 
+
 
 
 rule fastp:
     input:
-      R1=expand("raw_data/{sample}_1.fastq.gz", sample=config["samples"]),
-      R2=expand("raw_data/{sample}_2.fastq.gz", sample=config["samples"])
+      R1 = WORK_DATA + "{sample}_1.fastq.gz",
+      R2 = WORK_DATA + "{sample}_2.fastq.gz"
     
     output:
-       RP=expand("trimmed/{samples}_1_trim.fastq.gz", samples=config["samples"]),
-       RU=expand("trimmed/{samples}_2_trim.fastq.gz", samples=config["samples"])
+       RP = WORK_TRIM + "{samples}_1_trim.fastq.gz",
+       RU = WORK_TRIM + "{samples}_2_trim.fastq.gz"
        
-     
     priority: 40
      
     threads: 
@@ -52,28 +58,28 @@ rule fastp:
 
 rule kallisto_index:
     input:
-      initial="kallisto/Homo_sapiens.GRCh38.cdna.all.fa"
+      WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.fa"
       
     output:   
-      final="kallisto/Homo_sapiens.GRCh38.cdna.all.index"
+      WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index"
       
     threads:
      8
 
-    shell: "cp {input.initial} {output.final} | kallisto index -i {output.final} {input.initial}"
-         
+    shell: 
+      "cp {input} {output} | kallisto index -i {output} {input}"      
+
 
 rule kallisto_quant:
     input:
-      read1=expand("trimmed/{sample}_1_trim.fastq.gz", sample=config["samples"]),
-      read2=expand("trimmed/{sample}_2_trim.fastq.gz", sample=config["samples"]),
-      index="kallisto/Homo_sapiens.GRCh38.cdna.all.index"
+      read1 = WORK_TRIM + "{sample}_1_trim.fastq.gz",
+      read2 = WORK_TRIM + "{sample}_2_trim.fastq.gz", 
+      index = WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index"
       
     output:
-      final=expand("kallisto/{condition}", condition=config["conditions"])
+      WORK_KALL + "{condition}"
 
     threads:
       8
 
-    shell: "kallisto quant -i {input.index} -o {output.final} -t {threads} {input.read1} {input.read2}"
-
+    shell: "kallisto quant -i {input.index} -o {output} -t {threads} {input} {input}"
