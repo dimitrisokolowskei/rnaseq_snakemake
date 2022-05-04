@@ -10,9 +10,11 @@ WORK_KALL = config["WORK_KALL"]
 rule all:
     input:
       expand(WORK_QC + "{sample}_{replicate}_fastqc.{extension}", sample=config["samples"], replicate=[1, 2], extension=["zip", "html"]),
-      expand(WORK_TRIM + "{samples}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
+      expand(WORK_TRIM + "{sample}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
       WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index",
-      expand(WORK_KALL + "{condition}", condition=config["conditions"])
+      expand(WORK_KALL + "quant_result_{condition}", condition=config["conditions"])
+      
+
 
       
 rule fastqc:
@@ -41,8 +43,8 @@ rule fastp:
       R2 = WORK_DATA + "{sample}_2.fastq.gz"
     
     output:
-       RP = WORK_TRIM + "{samples}_1_trim.fastq.gz",
-       RU = WORK_TRIM + "{samples}_2_trim.fastq.gz"
+       RP = WORK_TRIM + "{sample}_1_trim.fastq.gz",
+       RU = WORK_TRIM + "{sample}_2_trim.fastq.gz"
        
     priority: 40
      
@@ -70,16 +72,18 @@ rule kallisto_index:
       "cp {input} {output} | kallisto index -i {output} {input}"      
 
 
+
 rule kallisto_quant:
     input:
-      read1 = WORK_TRIM + "{sample}_1_trim.fastq.gz",
-      read2 = WORK_TRIM + "{sample}_2_trim.fastq.gz", 
-      index = WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index"
-      
+      fq1 = WORK_TRIM + "{sample}_1_trim.fastq.gz",
+      fq2 = WORK_TRIM + "{sample}_2_trim.fastq.gz",
+      idx = WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.fa.index"
+    
     output:
-      WORK_KALL + "{condition}"
+      WORK_KALL + "quant_result_{condition}"
 
-    threads:
-      8
-
-    shell: "kallisto quant -i {input.index} -o {output} -t {threads} {input} {input}"
+    threads: 
+       8
+    
+    shell:
+      "kallisto quant -i {input.idx} -t {threads} -o {output} {input.fq1} {input.fq2}"
