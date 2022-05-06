@@ -12,7 +12,7 @@ rule all:
       expand(WORK_QC + "{sample}_{replicate}_fastqc.{extension}", sample=config["samples"], replicate=[1, 2], extension=["zip", "html"]),
       expand(WORK_TRIM + "{sample}_{replicate}_trim.fastq.gz", sample=config["samples"], replicate=[1, 2]),
       WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index",
-      expand(WORK_KALL + "quant_result_{condition}", condition=config["conditions"])
+      expand(WORK_KALL + "{sample}/abundance.tsv", sample=config["samples"])
       
 
 
@@ -22,7 +22,7 @@ rule fastqc:
       WORK_DATA + "{sample}_{replicate}.fastq.gz"
     
     output:
-      WORK_QC + "{sample}_{replicate}_fastqc.{extension}",
+      WORK_QC + "{sample}_{replicate}_fastqc.{extension}"
       
     priority: 50
 
@@ -44,7 +44,9 @@ rule fastp:
     
     output:
        RP = WORK_TRIM + "{sample}_1_trim.fastq.gz",
-       RU = WORK_TRIM + "{sample}_2_trim.fastq.gz"
+       RU = WORK_TRIM + "{sample}_2_trim.fastq.gz",
+       html = WORK_QC + "{sample}.html",
+       json = WORK_QC + "{sample}.json"
        
     priority: 40
      
@@ -55,7 +57,7 @@ rule fastp:
       lenght=30
     
     shell:
-      "fastp -i {input.R1} -I {input.R2} -o {output.RP} -O {output.RU} -l {params.lenght} --adapter_fasta adapter.fa"
+      "fastp --thread {threads} --html {output.html} --json {output.json} -i {input.R1} -I {input.R2} -o {output.RP} -O {output.RU} -l {params.lenght} --adapter_fasta adapter.fa"
 
 
 rule kallisto_index:
@@ -77,13 +79,16 @@ rule kallisto_quant:
     input:
       fq1 = WORK_TRIM + "{sample}_1_trim.fastq.gz",
       fq2 = WORK_TRIM + "{sample}_2_trim.fastq.gz",
-      idx = WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.fa.index"
+      idx = WORK_KALL + "Homo_sapiens.GRCh38.cdna.all.index"
     
     output:
-      WORK_KALL + "quant_result_{condition}"
+      WORK_KALL + "{sample}/abundance.tsv"
+
+    params:
+      outdir = WORK_KALL + "{sample}/"  
 
     threads: 
        8
     
     shell:
-      "kallisto quant -i {input.idx} -t {threads} -o {output} {input.fq1} {input.fq2}"
+      "kallisto quant -i {input.idx} -o {params.outdir} -t {threads} {input.fq1} {input.fq2}"
