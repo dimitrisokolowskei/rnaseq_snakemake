@@ -2,24 +2,24 @@ samples:
   - SRR6974023
   - SRR6974024
   
- 
   
 conditions:
   - CS01
   - CS02
   
   
+  
 WORK_DATA:
-  /home/dimitri/Documentos/rnaseq_snakemake/rawData/
+  /home/dimitri/rnaseq_snakemake/rawData/
 
 WORK_QC:
-  /home/dimitri/Documentos/rnaseq_snakemake/qcData/
+  /home/dimitri/rnaseq_snakemake/qcData/
 
 WORK_TRIM:
-  /home/dimitri/Documentos/rnaseq_snakemake/trimData/
+  /home/dimitri/rnaseq_snakemake/trimData/
 
 WORK_KALL:
-  /home/dimitri/Documentos/rnaseq_snakemake/kallisto/
+  /home/dimitri/rnaseq_snakemake/kallisto/
 
 
 
